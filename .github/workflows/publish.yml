@@ -1,10 +1,10 @@
 name: Publish Firmware to dist Branch
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["Build ESP32 Firmware"]
     types: [completed]
-  workflow_dispatch:
 
 jobs:
   publish:
@@ -20,16 +20,30 @@ jobs:
       - name: Install GitHub CLI
         run: sudo apt-get install -y gh jq
 
-      - name: Download all artifacts from triggering workflow
+      - name: Determine Build Run ID
+        id: get-run
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OWNER: ${{ github.repository_owner }}
-          REPO: ${{ github.event.repository.name }}
-          RUN_ID: ${{ github.event.workflow_run.id }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Finding latest successful 'Build ESP32 Firmware' workflow run..."
+          RUN_ID=$(gh run list --repo "$REPO" --workflow "Build ESP32 Firmware" --json databaseId,status,conclusion -q \
+            '[.[] | select(.status=="completed" and .conclusion=="success")][0].databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No successful build workflow run found!" >&2
+            exit 1
+          fi
+          echo "Found run ID: $RUN_ID"
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+
+      - name: Download artifacts from build workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
           mkdir -p dist
           echo "Downloading artifacts from workflow run $RUN_ID"
-          gh run download $RUN_ID --repo "$OWNER/$REPO" --dir dist
+          gh run download "$RUN_ID" --repo "$REPO" --dir dist
 
       - name: Generate manifest.json
         run: ./build_manifest.sh dist
