@@ -28,9 +28,9 @@ namespace iPixelCommands {
         buffer[1] = 0x00;
         buffer[2] = 0x01;
         buffer[3] = 0x80;
-        buffer[4] = (uint8_t)hour;
-        buffer[5] = (uint8_t)minute;
-        buffer[6] = (uint8_t)second;
+        buffer[4] = hour;
+        buffer[5] = minute;
+        buffer[6] = second;
         buffer[7] = 0x00;
 
         return 8;
