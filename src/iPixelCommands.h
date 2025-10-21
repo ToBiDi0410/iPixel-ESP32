@@ -1,5 +1,7 @@
 #pragma once
 #include <Arduino.h>
+#include <stdexcept>
+#include <string>
 
 namespace iPixelCommands {
 

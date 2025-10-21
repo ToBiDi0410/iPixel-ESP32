@@ -4,7 +4,7 @@ namespace iPixelCommands {
 
     bool checkRange(const char* name, int value, int minVal, int maxVal) {
         if (value < minVal || value > maxVal) {
-            Serial.print("ERROR: ");
+            Serial.print("EXCEPTION: ");
             Serial.print(name);
             Serial.print(" out of range (");
             Serial.print(minVal);
@@ -12,6 +12,7 @@ namespace iPixelCommands {
             Serial.print(maxVal);
             Serial.print("), got ");
             Serial.println(value);
+            throw std::invalid_argument(std::string(name) + " out of range (" + std::to_string(minVal) + "-" + std::to_string(maxVal) + ") got " + std::to_string(value));
             return false;
         }
         return true;
@@ -21,17 +22,18 @@ namespace iPixelCommands {
         if (!checkRange("Hour", hour, 0, 23)) return 0;
         if (!checkRange("Minute", minute, 0, 59)) return 0;
         if (!checkRange("Second", second, 0, 59)) return 0;
-        if (bufSize < 7) return 0;
+        if (bufSize < 8) return 0;
 
         buffer[0] = 0x08;
         buffer[1] = 0x00;
         buffer[2] = 0x01;
         buffer[3] = 0x80;
-        buffer[4] = hour;
-        buffer[5] = minute;
-        buffer[6] = second;
+        buffer[4] = (uint8_t)hour;
+        buffer[5] = (uint8_t)minute;
+        buffer[6] = (uint8_t)second;
+        buffer[7] = 0x00;
 
-        return 7;
+        return 8;
     }
 
     size_t setFunMode(bool value, uint8_t* buf, size_t bufSize) {

@@ -89,7 +89,7 @@ void iPixelDevice::sendCommand(uint8_t* buffer, size_t length) {
 }
 
 void iPixelDevice::setTime(int hour, int minute, int second) {
-    uint8_t buf[7];
+    uint8_t buf[8];
     size_t len = iPixelCommands::setTime(hour, minute, second, buf, sizeof(buf));
     if(len == 0) return;
     printPrefix();
