@@ -81,7 +81,7 @@ jobs:
           fi
 
           # Copy new files into the worktree (they already exist in ../<repo>/dist)
-          rsync -a --delete ../<your-repo-name>/dist/ .
+          rsync -a --delete ../iPixel-ESP32/dist/ .
 
           git add .
           git commit -m "Publish new firmware and manifest [skip ci]" || echo "No changes to commit"
