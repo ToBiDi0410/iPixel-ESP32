@@ -1,0 +1,33 @@
+name: Publish Firmware to dist Branch
+
+on:
+  workflow_run:
+    workflows: ["Build ESP32 Firmware"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Generate Manifest and Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download all firmware artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Generate manifest.json
+        run: ./build_manifest.sh dist
+
+      - name: Deploy to dist branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: dist
+          force_orphan: true
