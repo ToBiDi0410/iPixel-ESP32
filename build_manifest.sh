@@ -3,11 +3,8 @@
 set -e  # Exit immediately if any command fails
 set -x  # Enable command tracing (debug output)
 
-OUTPUT_DIR="output"
-DIST_DIR="dist"
-
-echo "Creating distribution directory: $DIST_DIR"
-mkdir -p "$DIST_DIR"
+OUTPUT_DIR="dist"       # firmware source directory
+DIST_DIR="dist"         # same directory for manifest output
 
 MANIFEST_FILE="$DIST_DIR/manifest.json"
 echo "[" > "$MANIFEST_FILE"
@@ -62,9 +59,6 @@ for dir in "$OUTPUT_DIR"/*; do
 }
 EOF
 
-  echo "Copying firmware to $DIST_DIR/$platform..."
-  mkdir -p "$DIST_DIR/$platform"
-  cp "$firmware_path" "$DIST_DIR/$platform/"
 done
 
 echo "]" >> "$MANIFEST_FILE"
