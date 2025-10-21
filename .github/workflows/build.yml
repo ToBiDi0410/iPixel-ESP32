@@ -1,0 +1,106 @@
+name: Build and Publish ESP32 Firmware
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build All ESP32 Targets
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        env:
+          - esp32dev
+          - esp32c3dev
+          - esp32s3dev
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build firmware for ${{ matrix.env }}
+        run: pio run -e ${{ matrix.env }}
+
+      - name: Copy firmware to output folder
+        run: |
+          mkdir -p output/${{ matrix.env }}
+          cp .pio/build/${{ matrix.env }}/firmware.bin output/${{ matrix.env }}/firmware.bin
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ matrix.env }}
+          path: output/${{ matrix.env }}
+
+  generate-and-publish:
+    name: Generate Manifest and Publish to dist Branch
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Download all firmware artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: output
+
+      - name: Generate manifest.json
+        run: |
+          mkdir -p dist
+          echo '[' > dist/manifest.json
+
+          first=1
+          for dir in output/*; do
+            platform=$(basename "$dir")
+            chip=""
+            case $platform in
+              esp32dev) chip="ESP32" ;;
+              esp32c3dev) chip="ESP32-C3" ;;
+              esp32s3dev) chip="ESP32-S3" ;;
+              *) chip="ESP32" ;;
+            esac
+
+            [ $first -eq 0 ] && echo ',' >> dist/manifest.json || first=0
+            cat <<EOF >> dist/manifest.json
+            {
+              "name": "$platform",
+              "chipFamily": "$chip",
+              "parts": [
+                {
+                  "path": "$platform/firmware.bin",
+                  "offset": 0
+                }
+              ]
+            }
+            EOF
+            cp -r "$dir" "dist/$platform"
+          done
+
+          echo ']' >> dist/manifest.json
+
+      - name: Commit and Push to dist Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          git fetch
+          git switch --orphan dist || git checkout dist
+          git rm -rf .
+          cp -r dist/* .
+          git add .
+          git commit -m "Publish new firmware and manifest [skip ci]" || echo "No changes"
+          git push -f origin HEAD:dist
