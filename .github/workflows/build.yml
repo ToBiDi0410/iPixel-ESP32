@@ -1,4 +1,4 @@
-name: Build and Publish ESP32 Firmware
+name: Build ESP32 Firmware
 
 on:
   push:
@@ -20,10 +20,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -38,51 +38,8 @@ jobs:
           mkdir -p output/${{ matrix.env }}
           cp .pio/build/${{ matrix.env }}/firmware.bin output/${{ matrix.env }}/firmware.bin
 
-      - name: Save artifact
+      - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
           name: firmware-${{ matrix.env }}
           path: output/${{ matrix.env }}
-
-  generate-and-publish:
-    name: Generate Manifest and Publish to dist Branch
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Download all firmware artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Generate manifest.json
-        run: ./build_manifest.sh dist
-
-      - name: Commit and Push to dist Branch
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-          # Ensure we have the latest branches
-          git fetch origin
-
-          # Create a clean worktree for dist branch (no loss of generated files)
-          git worktree add ../dist-branch dist || true
-          cd ../dist-branch
-
-          # Initialize branch if it doesn't exist yet
-          if [ -z "$(git rev-parse --verify dist 2>/dev/null)" ]; then
-            git checkout --orphan dist
-          else
-            git checkout dist
-          fi
-
-          # Copy new files into the worktree (they already exist in ../<repo>/dist)
-          rsync -a --delete ../iPixel-ESP32/dist/ .
-
-          git add .
-          git commit -m "Publish new firmware and manifest [skip ci]" || echo "No changes to commit"
-          git push -f origin dist
