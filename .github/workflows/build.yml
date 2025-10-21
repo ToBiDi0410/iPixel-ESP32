@@ -59,38 +59,7 @@ jobs:
           path: output
 
       - name: Generate manifest.json
-        run: |
-          mkdir -p dist
-          echo '[' > dist/manifest.json
-
-          first=1
-          for dir in output/*; do
-            platform=$(basename "$dir")
-            chip=""
-            case $platform in
-              esp32dev) chip="ESP32" ;;
-              esp32c3dev) chip="ESP32-C3" ;;
-              esp32s3dev) chip="ESP32-S3" ;;
-              *) chip="ESP32" ;;
-            esac
-
-            [ $first -eq 0 ] && echo ',' >> dist/manifest.json || first=0
-            cat <<EOF >> dist/manifest.json
-            {
-              "name": "$platform",
-              "chipFamily": "$chip",
-              "parts": [
-                {
-                  "path": "$platform/firmware.bin",
-                  "offset": 0
-                }
-              ]
-            }
-            EOF
-            cp -r "$dir" "dist/$platform"
-          done
-
-          echo ']' >> dist/manifest.json
+        run: ./build_manifest.sh
 
       - name: Commit and Push to dist Branch
         run: |
