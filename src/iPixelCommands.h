@@ -1,8 +1,10 @@
 #pragma once
+
 #include <Arduino.h>
 #include <stdexcept>
-#include <string>
 #include <vector>
+#include "Font.h" 
+#include "Helpers.h"
 
 /**
  * Provides functions to generate BLE commands for the
@@ -25,5 +27,6 @@ namespace iPixelCommands {
     std::vector<uint8_t> setClockMode(int style, int dayOfWeek, int year, int month, int day, bool showDate, bool format24);
     std::vector<uint8_t> setRhythmLevelMode(int style, const int levels[11]);
     std::vector<uint8_t> setRhythmAnimationMode(int style, int frameNumber);
+    std::vector<uint8_t> sendText(const String &text, int animation, int save_slot, int speed, uint8_t colorR, uint8_t colorG, uint8_t colorB, int rainbow_mode, int matrix_height);
 
 }

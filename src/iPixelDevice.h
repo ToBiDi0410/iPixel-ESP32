@@ -44,4 +44,6 @@ public:
     void setClockMode(int style, int dayOfWeek, int year, int month, int day, bool showDate, bool format24);
     void setRhythmLevelMode(int style, const int levels[11]);
     void setRhythmAnimationMode(int style, int frame);
+    void sendText(const String& text, int animation, int save_slot, int speed, uint8_t colorR, uint8_t colorG, uint8_t colorB, int rainbow_mode, int matrix_height);
+
 };

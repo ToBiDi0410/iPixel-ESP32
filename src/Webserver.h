@@ -47,6 +47,10 @@ void init_webserver() {
             if (request->hasParam(name)) return request->getParam(name)->value() == "true";
             return def;
         };
+        auto getParamString = [&](const char* name, const String def = "Unknown") {
+            if (request->hasParam(name)) return request->getParam(name)->value();
+            return def;
+        };
 
         try {
             if (action == "setTime") {
@@ -68,7 +72,13 @@ void init_webserver() {
             } else if (action == "deleteScreen") {
                 dev->deleteScreen(getParamInt("screen"));
             } else if (action == "setPixel") {
-                dev->setPixel(getParamInt("x"), getParamInt("y"), getParamInt("r"), getParamInt("g"), getParamInt("b"));
+                dev->setPixel(
+                    getParamInt("x"),
+                    getParamInt("y"),
+                    getParamInt("r"),
+                    getParamInt("g"),
+                    getParamInt("b")
+                );
             } else if (action == "setClockMode") {
                 dev->setClockMode(getParamInt("style"), getParamInt("dayOfWeek"), getParamInt("year"), getParamInt("month"), getParamInt("day"), getParamBool("showDate"), getParamBool("format24"));
             } else if (action == "setRhythmLevelMode") {
@@ -85,7 +95,19 @@ void init_webserver() {
                         dev->setPixel(x, y, 255, 255, 255);
                     }
                 }
-            } else {
+            } else if (action == "sendText") {
+                dev->sendText(
+                    getParamString("text"),
+                    getParamInt("animation"),
+                    getParamInt("save_slot"),
+                    getParamInt("speed"),
+                    getParamInt("colorR"),
+                    getParamInt("colorG"),
+                    getParamInt("colorB"),
+                    getParamInt("rainbow_mode"),
+                    getParamInt("matrix_height")
+                );
+            }  else {
                 request->send(400, "text/plain", "Invalid action");
                 return;
             }
