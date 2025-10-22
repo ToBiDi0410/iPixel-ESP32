@@ -18,195 +18,193 @@ namespace iPixelCommands {
         return true;
     }
 
-    size_t setTime(int hour, int minute, int second, uint8_t* buffer, size_t bufSize) {
-        if (!checkRange("Hour", hour, 0, 23)) return 0;
-        if (!checkRange("Minute", minute, 0, 59)) return 0;
-        if (!checkRange("Second", second, 0, 59)) return 0;
-        if (bufSize < 8) return 0;
+    std::vector<uint8_t> setTime(int hour, int minute, int second) {
+        checkRange("Hour", hour, 0, 23);
+        checkRange("Minute", minute, 0, 59);
+        checkRange("Second", second, 0, 59);
 
-        buffer[0] = 0x08;
-        buffer[1] = 0x00;
-        buffer[2] = 0x01;
-        buffer[3] = 0x80;
-        buffer[4] = hour;
-        buffer[5] = minute;
-        buffer[6] = second;
-        buffer[7] = 0x00;
+        std::vector<uint8_t> frame(8);
+        frame[0] = 0x08;
+        frame[1] = 0x00;
+        frame[2] = 0x01;
+        frame[3] = 0x80;
+        frame[4] = (uint8_t)hour;
+        frame[5] = (uint8_t)minute;
+        frame[6] = (uint8_t)second;
+        frame[7] = 0x00;
 
-        return 8;
+        return frame;
     }
 
-    size_t setFunMode(bool value, uint8_t* buf, size_t bufSize) {
-        if (bufSize < 5) return 0;
+    std::vector<uint8_t> setFunMode(bool value) {
+        std::vector<uint8_t> frame(5);
+        frame[0] = 0x05;
+        frame[1] = 0x00;
+        frame[2] = 0x04;
+        frame[3] = 0x01;
+        frame[4] = value ? 0x01 : 0x00;
 
-        buf[0] = 0x05;
-        buf[1] = 0x00;
-        buf[2] = 0x04;
-        buf[3] = 0x01;
-        buf[4] = value ? 1 : 0;
-
-        return 5;
+        return frame;
     }
         
-    size_t setOrientation(int orientation, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Orientation", orientation, 0, 2)) return 0;
-        if (bufSize < 5) return 0;
+    std::vector<uint8_t> setOrientation(int orientation) {
+        checkRange("Orientation", orientation, 0, 2);
 
-        buf[0] = 0x05;
-        buf[1] = 0x00;
-        buf[2] = 0x06;
-        buf[3] = 0x80;
-        buf[4] = orientation;
+        std::vector<uint8_t> frame(5);
+        frame[0] = 0x05;
+        frame[1] = 0x00;
+        frame[2] = 0x06;
+        frame[3] = 0x80;
+        frame[4] = (uint8_t)orientation;
 
-        return 5;
+        return frame;
     }
 
-    size_t clear(uint8_t* buf, size_t bufSize) {
-        if (bufSize < 4) return 0;
+    std::vector<uint8_t> clear() {
+        std::vector<uint8_t> frame(4);
+        frame[0] = 0x04;
+        frame[1] = 0x00;
+        frame[2] = 0x03;
+        frame[3] = 0x80;
 
-        buf[0] = 0x04;
-        buf[1] = 0x00;
-        buf[2] = 0x03;
-        buf[3] = 0x80;
-
-        return 4;
+        return frame;
     }
 
-    size_t setBrightness(int brightness, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Brightness", brightness, 0, 100)) return 0;
-        if (bufSize < 5) return 0;
+    std::vector<uint8_t> setBrightness(int brightness) {
+        checkRange("Brightness", brightness, 0, 100);
 
-        buf[0] = 0x05;
-        buf[1] = 0x00;
-        buf[2] = 0x04;
-        buf[3] = 0x80;
-        buf[4] = brightness;
+        std::vector<uint8_t> frame(5);
+        frame[0] = 0x05;
+        frame[1] = 0x00;
+        frame[2] = 0x04;
+        frame[3] = 0x80;
+        frame[4] = (uint8_t)brightness;
 
-        return 5;
+        return frame;
     }
 
-    size_t setSpeed(int speed, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Speed", speed, 0, 100)) return 0;
-        if (bufSize < 4) return 0;
+    std::vector<uint8_t> setSpeed(int speed) {
+        checkRange("Speed", speed, 0, 100);
 
-        buf[0] = 0x05;
-        buf[1] = 0x00;
-        buf[2] = 0x03;
-        buf[3] = speed;
+        std::vector<uint8_t> frame(4);
+        frame[0] = 0x05;
+        frame[1] = 0x00;
+        frame[2] = 0x03;
+        frame[3] = (uint8_t)speed;
 
-        return 4;
+        return frame;
     }
 
-    size_t ledOff(uint8_t* buf, size_t bufSize) {
-        if (bufSize < 5) return 0;
+    std::vector<uint8_t> ledOff() {
+        std::vector<uint8_t> frame(5);
+        frame[0] = 0x05;
+        frame[1] = 0x00;
+        frame[2] = 0x07;
+        frame[3] = 0x01;
+        frame[4] = 0x00;
 
-        buf[0] = 0x05;
-        buf[1] = 0x00;
-        buf[2] = 0x07;
-        buf[3] = 0x01;
-        buf[4] = 0x00;
-
-        return 5;
+        return frame;
     }
 
-    size_t ledOn(uint8_t* buf, size_t bufSize) {
-        if (bufSize < 5) return 0;
+    std::vector<uint8_t> ledOn() {
+        std::vector<uint8_t> frame(5);
+        frame[0] = 0x05;
+        frame[1] = 0x00;
+        frame[2] = 0x07;
+        frame[3] = 0x01;
+        frame[4] = 0x01;
 
-        buf[0] = 0x05;
-        buf[1] = 0x00;
-        buf[2] = 0x07;
-        buf[3] = 0x01;
-        buf[4] = 0x01;
-
-        return 5;
+        return frame;
     }
 
-    size_t deleteScreen(int screen, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Screen", screen, 0, 10)) return 0;
-        if (bufSize < 6) return 0;
+    std::vector<uint8_t> deleteScreen(int screen) {
+        checkRange("Screen", screen, 0, 10);
 
-        buf[0] = 0x07;
-        buf[1] = 0x00;
-        buf[2] = 0x02;
-        buf[3] = 0x01;
-        buf[4] = 0x00;
-        buf[5] = screen;
+        std::vector<uint8_t> frame(6);
+        frame[0] = 0x07;
+        frame[1] = 0x00;
+        frame[2] = 0x02;
+        frame[3] = 0x01;
+        frame[4] = 0x00;
+        frame[5] = (uint8_t)screen;
 
-        return 6;
+        return frame;
     }
 
-    size_t setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("X", x, 0, 255)) return 0;
-        if (!checkRange("Y", y, 0, 255)) return 0;
-        if (!checkRange("R", r, 0, 255)) return 0;
-        if (!checkRange("G", g, 0, 255)) return 0;
-        if (!checkRange("B", b, 0, 255)) return 0;
-        if (bufSize < 10) return 0;
+    std::vector<uint8_t> setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
+        checkRange("X", x, 0, 255);
+        checkRange("Y", y, 0, 255);
+        checkRange("R", r, 0, 255);
+        checkRange("G", g, 0, 255);
+        checkRange("B", b, 0, 255);
 
-        buf[0] = 0x0A;
-        buf[1] = 0x00;
-        buf[2] = 0x05;
-        buf[3] = 0x01;
-        buf[4] = 0x00;
-        buf[5] = r;
-        buf[6] = g;
-        buf[7] = b;
-        buf[8] = x;
-        buf[9] = y;
+        std::vector<uint8_t> frame(10);
+        frame[0] = 0x0A;
+        frame[1] = 0x00;
+        frame[2] = 0x05;
+        frame[3] = 0x01;
+        frame[4] = 0x00;
+        frame[5] = r;
+        frame[6] = g;
+        frame[7] = b;
+        frame[8] = (uint8_t)x;
+        frame[9] = (uint8_t)y;
 
-        return 10;
+        return frame;
     }
 
-    size_t setClockMode(int style, int dayOfWeek, int year, int month, int day, bool showDate, bool format24, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Style", style, 1, 8)) return 0;
-        if (!checkRange("Day of Week", dayOfWeek, 1, 7)) return 0;
-        if (!checkRange("Year", year, 0, 99)) return 0;
-        if (!checkRange("Month", month, 1, 12)) return 0;
-        if (!checkRange("Day", day, 1, 31)) return 0;
-        if (bufSize < 9) return 0;
+    std::vector<uint8_t> setClockMode(int style, int dayOfWeek, int year, int month, int day, bool showDate, bool format24) {
+        checkRange("Style", style, 1, 8);
+        checkRange("Day of Week", dayOfWeek, 1, 7);
+        checkRange("Year", year, 0, 99);
+        checkRange("Month", month, 1, 12);
+        checkRange("Day", day, 1, 31);
 
-        buf[0] = 0x0B; buf[1] = 0x00; buf[2] = 0x06; buf[3] = 0x01;
-        buf[4] = style;
-        buf[5] = format24 ? 1 : 0;
-        buf[6] = showDate ? 1 : 0;
-        buf[7] = year;
-        buf[8] = month;
-        buf[9] = day;
-        buf[10] = dayOfWeek;
+        std::vector<uint8_t> frame(11);
+        frame[0] = 0x0B;
+        frame[1] = 0x00;
+        frame[2] = 0x06;
+        frame[3] = 0x01;
+        frame[4] = (uint8_t)style;
+        frame[5] = format24 ? 0x01 : 0x00;
+        frame[6] = showDate ? 0x01 : 0x00;
+        frame[7] = (uint8_t)year;
+        frame[8] = (uint8_t)month;
+        frame[9] = (uint8_t)day;
+        frame[10] = (uint8_t)dayOfWeek;
 
-        return 11;
+        return frame;
     }
 
-    size_t setRhythmLevelMode(int style, const int levels[11], uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Style", style, 0, 4)) return 0;
+    std::vector<uint8_t> setRhythmLevelMode(int style, const int levels[11]) {
+        checkRange("Style", style, 0, 4);
+        for (int i = 0; i < 11; i++) checkRange("Level", levels[i], 0, 15);
+
+        std::vector<uint8_t> frame(5 + 11);
+        frame[0] = 0x10;
+        frame[1] = 0x00; 
+        frame[2] = 0x01;
+        frame[3] = 0x02;
+        frame[4] = (uint8_t)style;
         for (int i = 0; i < 11; i++)
-            if (!checkRange("Level", levels[i], 0, 15)) return 0;
-        if (bufSize < 15) return 0;
+            frame[5 + i] = (uint8_t)levels[i];
 
-        buf[0] = 0x10;
-        buf[1] = 0x00; 
-        buf[2] = 0x01;
-        buf[3] = 0x02;
-        buf[4] = style;
-        for (int i = 0; i < 11; i++)
-            buf[5 + i] = levels[i];
-
-        return 16;
+        return frame;
     }
 
-    size_t setRhythmAnimationMode(int style, int frame, uint8_t* buf, size_t bufSize) {
-        if (!checkRange("Style", style, 0, 1)) return 0;
-        if (!checkRange("Frame", frame, 0, 7)) return 0;
-        if (bufSize < 6) return 0; 
+    std::vector<uint8_t> setRhythmAnimationMode(int style, int frameNumber) {
+        checkRange("Style", style, 0, 1);
+        checkRange("Frame", frameNumber, 0, 7);
 
-        buf[0] = 0x06;
-        buf[1] = 0x00;
-        buf[2] = 0x00;
-        buf[3] = 0x02;
-        buf[4] = frame;
-        buf[5] = style;
+        std::vector<uint8_t> frame(6);
+        frame[0] = 0x06;
+        frame[1] = 0x00;
+        frame[2] = 0x00;
+        frame[3] = 0x02;
+        frame[4] = (uint8_t)frameNumber;
+        frame[5] = (uint8_t)style;
 
-        return 6;
+        return frame;
     }
 
 }

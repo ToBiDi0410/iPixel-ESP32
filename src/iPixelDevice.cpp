@@ -66,32 +66,30 @@ void iPixelDevice::connectAsync() {
     Serial.println("Connected successfully!");
 }
 
-void iPixelDevice::sendCommand(uint8_t* buffer, size_t length) {
+void iPixelDevice::sendCommand(std::vector<uint8_t> command) {
     if (!connected || !characteristic) {
         printPrefix();
         Serial.println("ERROR: Not connected or characteristic not ready!");
         return;
     }
 
-    if (length <= 4) {
+    if (command.size() <= 4) {
         printPrefix();
         Serial.println("ERROR: Command too short!");
         return;
     }
 
-    characteristic->writeValue(buffer, length, false);
+    characteristic->writeValue(command.data(), command.size(), false);
 
     // Debug output
     printPrefix();
     Serial.print("Sent command (");
-    Serial.print(length);
+    Serial.print(command.size());
     Serial.println(" bytes)");
 }
 
 void iPixelDevice::setTime(int hour, int minute, int second) {
-    uint8_t buf[8];
-    size_t len = iPixelCommands::setTime(hour, minute, second, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setTime(hour, minute, second);
     printPrefix();
     Serial.print("Time ");
     Serial.print(hour);
@@ -100,98 +98,80 @@ void iPixelDevice::setTime(int hour, int minute, int second) {
     Serial.print(":");
     Serial.print(second);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::setFunMode(bool value) {
-    uint8_t buf[5];
-    size_t len = iPixelCommands::setFunMode(value, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setFunMode(value);
     printPrefix();
     Serial.print("Fun Mode ");
     Serial.print(value);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::setOrientation(int orientation) {
-    uint8_t buf[5];
-    size_t len = iPixelCommands::setOrientation(orientation, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setOrientation(orientation);
     printPrefix();
     Serial.print("Orientation ");
     Serial.print(orientation);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::clear() {
-    uint8_t buf[4];
-    size_t len = iPixelCommands::clear(buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::clear();
     printPrefix();
     Serial.print("Clear");
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::setBrightness(int brightness) {
-    uint8_t buf[5];
-    size_t len = iPixelCommands::setBrightness(brightness, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setBrightness(brightness);
     printPrefix();
     Serial.print("Brightness ");
     Serial.print(brightness);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::setSpeed(int speed) {
-    uint8_t buf[4];
-    size_t len = iPixelCommands::setSpeed(speed, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setSpeed(speed);
     printPrefix();
     Serial.print("Speed ");
     Serial.print(speed);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::ledOff() {
-    uint8_t buf[5];
-    size_t len = iPixelCommands::ledOff(buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::ledOff();
     printPrefix();
-    Serial.print("LED Off");
+    Serial.print("LED: Off");
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::ledOn() {
-    uint8_t buf[5];
-    size_t len = iPixelCommands::ledOn(buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::ledOn();
     printPrefix();
-    Serial.print("LED On");
+    Serial.print("LED: On");
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::deleteScreen(int screen) {
-    uint8_t buf[6];
-    size_t len = iPixelCommands::deleteScreen(screen, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::deleteScreen(screen);
     printPrefix();
     Serial.print("Delete Screen ");
     Serial.print(screen);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 };
 
 void iPixelDevice::setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
-    uint8_t buf[10];
-    size_t len = iPixelCommands::setPixel(x, y, r, g, b, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setPixel(x, y, r, g, b);
     printPrefix();
     Serial.print("Pixel at (");
     Serial.print(x);
@@ -205,13 +185,11 @@ void iPixelDevice::setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     Serial.print(b);
     Serial.print(")");
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 };
 
 void iPixelDevice::setClockMode(int style, int dayOfWeek, int year, int month, int day, bool showDate, bool format24) {
-    uint8_t buf[11];
-    size_t len = iPixelCommands::setClockMode(style, dayOfWeek, year, month, day, showDate, format24, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setClockMode(style, dayOfWeek, year, month, day, showDate, format24);
     printPrefix();
     Serial.print("Clock Mode: style=");
     Serial.print(style);
@@ -228,13 +206,11 @@ void iPixelDevice::setClockMode(int style, int dayOfWeek, int year, int month, i
     Serial.print(", dayOfWeek=");
     Serial.print(dayOfWeek);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 };
 
 void iPixelDevice::setRhythmLevelMode(int style, const int levels[11]) {
-    uint8_t buf[16];
-    size_t len = iPixelCommands::setRhythmLevelMode(style, levels, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setRhythmLevelMode(style, levels);
     printPrefix();
     Serial.print("Rythm Level Mode: Style ");
     Serial.print(style);
@@ -244,18 +220,16 @@ void iPixelDevice::setRhythmLevelMode(int style, const int levels[11]) {
         Serial.print(levels[i]);
     }
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 }
 
 void iPixelDevice::setRhythmAnimationMode(int style, int frame) {
-    uint8_t buf[6];
-    size_t len = iPixelCommands::setRhythmAnimationMode(style, frame, buf, sizeof(buf));
-    if(len == 0) return;
+    std::vector<uint8_t> command = iPixelCommands::setRhythmAnimationMode(style, frame);
     printPrefix();
     Serial.print("Rythm Animation Mode: Style ");
     Serial.print(style);
     Serial.print(" at Frame ");
     Serial.print(frame);
     Serial.println();
-    sendCommand(buf, len);
+    sendCommand(command);
 };

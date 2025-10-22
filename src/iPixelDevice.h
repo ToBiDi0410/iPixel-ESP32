@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <vector>
 #include <NimBLEDevice.h>
 
 extern NimBLEUUID serviceUUID;
@@ -23,7 +24,7 @@ public:
 
     //Methods
     void connectAsync();
-    void sendCommand(uint8_t* buffer, size_t length);
+    void sendCommand(std::vector<uint8_t> command);
 
     //Commands
     void setTime(int hour, int minute, int second);
