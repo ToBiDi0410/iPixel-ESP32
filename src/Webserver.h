@@ -79,6 +79,12 @@ void init_webserver() {
                 dev->setRhythmLevelMode(getParamInt("style"), levels);
             } else if (action == "setRhythmAnimationMode") {
                 dev->setRhythmAnimationMode(getParamInt("style"), getParamInt("frame"));
+            } else if (action == "fill") {
+                for(int x=0; x<32; x++) {
+                    for(int y=0; y<32; y++) {
+                        dev->setPixel(x, y, 255, 255, 255);
+                    }
+                }
             } else {
                 request->send(400, "text/plain", "Invalid action");
                 return;

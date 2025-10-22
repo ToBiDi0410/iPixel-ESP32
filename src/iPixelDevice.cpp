@@ -66,26 +66,44 @@ void iPixelDevice::connectAsync() {
     Serial.println("Connected successfully!");
 }
 
-void iPixelDevice::sendCommand(std::vector<uint8_t> command) {
-    if (!connected || !characteristic) {
-        printPrefix();
-        Serial.println("ERROR: Not connected or characteristic not ready!");
-        return;
-    }
+void iPixelDevice::queueTick() {
+    if (queue.empty()) return;
+    //Get command from queue
+    std::vector<uint8_t> &command = queue.front();
 
-    if (command.size() <= 4) {
-        printPrefix();
-        Serial.println("ERROR: Command too short!");
-        return;
-    }
+    //Take bytes from command
+    size_t chunkSize = min(500, (int)command.size());
 
-    characteristic->writeValue(command.data(), command.size(), false);
+    //Write bytes from command
+    characteristic->writeValue(command.data(), chunkSize, false);
 
-    // Debug output
+    //Remove bytes from command
+    command.erase(command.begin(), command.begin() + chunkSize);
+
+    //Debug
     printPrefix();
-    Serial.print("Sent command (");
+    Serial.print("Sent chunk of ");
+    Serial.print(chunkSize);
+    Serial.print(" bytes (remaining: ");
     Serial.print(command.size());
-    Serial.println(" bytes)");
+    Serial.print(") (queue size: ");
+    Serial.print(queue.size());
+    Serial.println(")");
+
+    //Remove command if empty
+    if (command.empty()) queue.erase(queue.begin());
+
+    //Do not overload BLE
+    delay(100);
+}
+
+void iPixelDevice::queuePush(std::vector<uint8_t> command) {
+    queue.push_back(command);
+    printPrefix();
+    Serial.print("Added command with ");
+    Serial.print(command.size());
+    Serial.print(" bytes to queue at ");
+    Serial.println(queue.size() - 1);
 }
 
 void iPixelDevice::setTime(int hour, int minute, int second) {
@@ -98,7 +116,7 @@ void iPixelDevice::setTime(int hour, int minute, int second) {
     Serial.print(":");
     Serial.print(second);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::setFunMode(bool value) {
@@ -107,7 +125,7 @@ void iPixelDevice::setFunMode(bool value) {
     Serial.print("Fun Mode ");
     Serial.print(value);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::setOrientation(int orientation) {
@@ -116,7 +134,7 @@ void iPixelDevice::setOrientation(int orientation) {
     Serial.print("Orientation ");
     Serial.print(orientation);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::clear() {
@@ -124,7 +142,7 @@ void iPixelDevice::clear() {
     printPrefix();
     Serial.print("Clear");
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::setBrightness(int brightness) {
@@ -133,7 +151,7 @@ void iPixelDevice::setBrightness(int brightness) {
     Serial.print("Brightness ");
     Serial.print(brightness);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::setSpeed(int speed) {
@@ -142,7 +160,7 @@ void iPixelDevice::setSpeed(int speed) {
     Serial.print("Speed ");
     Serial.print(speed);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::ledOff() {
@@ -150,7 +168,7 @@ void iPixelDevice::ledOff() {
     printPrefix();
     Serial.print("LED: Off");
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::ledOn() {
@@ -158,7 +176,7 @@ void iPixelDevice::ledOn() {
     printPrefix();
     Serial.print("LED: On");
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::deleteScreen(int screen) {
@@ -167,7 +185,7 @@ void iPixelDevice::deleteScreen(int screen) {
     Serial.print("Delete Screen ");
     Serial.print(screen);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 };
 
 void iPixelDevice::setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
@@ -185,7 +203,7 @@ void iPixelDevice::setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     Serial.print(b);
     Serial.print(")");
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 };
 
 void iPixelDevice::setClockMode(int style, int dayOfWeek, int year, int month, int day, bool showDate, bool format24) {
@@ -206,7 +224,7 @@ void iPixelDevice::setClockMode(int style, int dayOfWeek, int year, int month, i
     Serial.print(", dayOfWeek=");
     Serial.print(dayOfWeek);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 };
 
 void iPixelDevice::setRhythmLevelMode(int style, const int levels[11]) {
@@ -220,7 +238,7 @@ void iPixelDevice::setRhythmLevelMode(int style, const int levels[11]) {
         Serial.print(levels[i]);
     }
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 }
 
 void iPixelDevice::setRhythmAnimationMode(int style, int frame) {
@@ -231,5 +249,5 @@ void iPixelDevice::setRhythmAnimationMode(int style, int frame) {
     Serial.print(" at Frame ");
     Serial.print(frame);
     Serial.println();
-    sendCommand(command);
+    queuePush(command);
 };

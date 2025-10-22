@@ -93,7 +93,6 @@ void loop() {
 
 void loop_connected() {
   loop_deviceregistry();
-  delay(10);
 }
 
 //  iPixelDevice test(BLEAddress("3d:50:0c:1f:6d:ec"));

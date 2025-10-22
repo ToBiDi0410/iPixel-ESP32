@@ -16,6 +16,7 @@ iPixelDevice* getOrCreateDevice(const BLEAddress& addr) {
 
 void loop_deviceregistry() {
     static unsigned long lastAttempt = 0;
+    //Connection attempts
     if (millis() - lastAttempt > 1000) {
         lastAttempt = millis();
         for (auto* dev : knownDevices) {
@@ -23,4 +24,8 @@ void loop_deviceregistry() {
             dev->connectAsync();
         }
     }
+
+    //Send from queue
+    for (auto* dev : knownDevices)
+        if (dev->connected) dev->queueTick();
 }

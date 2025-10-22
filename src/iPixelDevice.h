@@ -24,7 +24,11 @@ public:
 
     //Methods
     void connectAsync();
-    void sendCommand(std::vector<uint8_t> command);
+
+    //Queue
+    std::vector<std::vector<uint8_t>> queue;
+    void queueTick();
+    void queuePush(std::vector<uint8_t> command);
 
     //Commands
     void setTime(int hour, int minute, int second);
