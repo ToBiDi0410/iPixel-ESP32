@@ -90,6 +90,15 @@ void iPixelDevice::queueTick() {
     Serial.print(queue.size());
     Serial.println(")");
 
+    //Print bytes as HEX
+    Serial.print("Data: ");
+    for (size_t i = 0; i < chunkSize; i++) {
+        if (command[i] < 0x10) Serial.print('0'); // leading zero for single-digit hex
+        Serial.print(command[i], HEX);
+        Serial.print(' ');
+    }
+    Serial.println();
+
     //Remove command if empty
     if (command.empty()) queue.erase(queue.begin());
 

@@ -18,22 +18,22 @@ You have to determine this BLE-address on your own (e.g. using Android Apps).
 > ⚠️ When an endpoint is called for the first time, the ESP32 connects to the device.  
 > This may temporarily return **HTTP 408 (Request Timeout)**.
 
-| Endpoint                              | Description                    | Parameters                                              |
-| ------------------------------------- | ------------------------------ | ------------------------------------------------------- |
-| `/device/:mac/setTime`                | Set device time                | `hour=0-23&minute=0-59&second=0-59`                     |
-| `/device/:mac/setFunMode`             | Enable/disable fun mode        | `funMode=true/false`                                    |
-| `/device/:mac/setOrientation`         | Set display orientation        | `orientation=0-2`                                       |
-| `/device/:mac/clear`                  | Clear the display              | —                                                       |
-| `/device/:mac/setBrightness`          | Adjust brightness              | `brightness=0-100`                                      |
-| `/device/:mac/setSpeed`               | Adjust animation speed         | `speed=0-100`                                           |
-| `/device/:mac/ledOff`                 | Turn LEDs off                  | —                                                       |
-| `/device/:mac/ledOn`                  | Turn LEDs on                   | —                                                       |
-| `/device/:mac/deleteScreen`           | Delete a screen                | `screen=0-10`                                           |
-| `/device/:mac/setPixel`               | Set individual pixel color     | `x=0-255&y=0-255&r=0-255&g=0-255&b=0-255`               |
-| `/device/:mac/setClockMode`           | Configure clock mode           | `style=1-8&dayOfWeek=1-7&year=0-99&month=1-12&day=1-31` |
-| `/device/:mac/setRhythmLevelMode`     | Set rhythm-level visualization | `style=0-4&l0=0-15&...&l14=0-15`                        |
-| `/device/:mac/setRhythmAnimationMode` | Set rhythm animation           | `style=0-1&frame=0-7`                                   |
-
+| Endpoint                              | Description                    | Parameters                                                                                                                        |
+| ------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `/device/:mac/setTime`                | Set device time                | `hour=0-23&minute=0-59&second=0-59`                                                                                               |
+| `/device/:mac/setFunMode`             | Enable/disable fun mode        | `funMode=true/false`                                                                                                              |
+| `/device/:mac/setOrientation`         | Set display orientation        | `orientation=0-2`                                                                                                                 |
+| `/device/:mac/clear`                  | Clear the display              | —                                                                                                                                 |
+| `/device/:mac/setBrightness`          | Adjust brightness              | `brightness=0-100`                                                                                                                |
+| `/device/:mac/setSpeed`               | Adjust animation speed         | `speed=0-100`                                                                                                                     |
+| `/device/:mac/ledOff`                 | Turn LEDs off                  | —                                                                                                                                 |
+| `/device/:mac/ledOn`                  | Turn LEDs on                   | —                                                                                                                                 |
+| `/device/:mac/deleteScreen`           | Delete a screen                | `screen=0-10`                                                                                                                     |
+| `/device/:mac/setPixel`               | Set individual pixel color     | `x=0-255&y=0-255&r=0-255&g=0-255&b=0-255`                                                                                         |
+| `/device/:mac/setClockMode`           | Configure clock mode           | `style=1-8&dayOfWeek=1-7&year=0-99&month=1-12&day=1-31`                                                                           |
+| `/device/:mac/setRhythmLevelMode`     | Set rhythm-level visualization | `style=0-4&l0=0-15&...&l14=0-15`                                                                                                  |
+| `/device/:mac/setRhythmAnimationMode` | Set rhythm animation           | `style=0-1&frame=0-7`                                                                                                             |
+| `/device/:mac/sendText`               | Send text                      | `text=Hello&animation=0-7&save_slot=1-10&speed=0-100&colorR=0-255&colorG=0-255&colorB=0-255&rainbow_mode=0-9&matrix_height=0-255` |
 ---
 
 ## ⚙️ Installation
@@ -50,14 +50,15 @@ You have to determine this BLE-address on your own (e.g. using Android Apps).
 
 ---
 ## 📝 Todo
+* Arbitrary `setPixels` to draw a custom framebuffer
+* Device pairings (save devices instead of always using the mac)
 * Password or key-based protection
-* Multi-device support / testing
-* Enhanced error handling with API feedback
+* Connection improvements (faster connect? better disconnect handling?)
 * Commands:
   * `sendPNG`
   * `sendGIF`
-  * `setPixels`
-
+* Clock Mode via NTP (set Display as clock)
+* Web Flasher Support
 ---
 
 ## 🙏 Credits

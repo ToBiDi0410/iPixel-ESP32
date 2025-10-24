@@ -3,16 +3,14 @@
 #include <vector>
 #include <cstdint>
 
-// Auto-generiert von convert_png_to_font_h.py
 // Font: VCR_OSD_MONO
-// Size: 16px (auf 16px Höhe)
+// Size: 16px
 
 struct FontChar {
     int width;
-    std::vector<uint16_t> data; // 16px Höhe, 16-bit Breite
+    std::vector<uint16_t> data; // 16px Height, 16-bit Width
 };
 
-// Map von ASCII-Code zu Bitmap-Daten
 const std::map<char, FontChar> FONT_VCR_OSD_MONO_16PX = {
     {' ', {9, { // ASCII 32
         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 

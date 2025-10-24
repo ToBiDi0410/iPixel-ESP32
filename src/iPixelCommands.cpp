@@ -270,13 +270,13 @@ namespace iPixelCommands {
             header.insert(header.end(), switched.begin(), switched.end());
         };
 
-        appendHeader16(header_1_val);
-        header.push_back(0x00);
-        header.push_back(0x01);
-        header.push_back(0x00);
-        appendHeader16(header_3_val);
-        header.push_back(0x00);
-        header.push_back(0x00);
+        appendHeader16(header_1_val); //Byte 1-2
+        header.push_back(0x00); //Byte 3
+        header.push_back(0x01); //Byte 4
+        header.push_back(0x00); //Byte 5
+        appendHeader16(header_3_val); //Byte 6-7
+        header.push_back(0x00); //Byte 8
+        header.push_back(0x00); //Byte 9
 
         // --- Save slot ---
         uint16_t save_slot_val = (uint16_t)(save_slot);
@@ -284,7 +284,7 @@ namespace iPixelCommands {
             (uint8_t)(save_slot_val & 0xFF),
             (uint8_t)((save_slot_val >> 8) & 0xFF)
         };
-        save_slot_bytes = Helpers::switchEndian(save_slot_bytes);
+        save_slot_bytes = save_slot_bytes; //Byte 14-15
 
         // --- Payload ---
         std::vector<uint8_t> payload;
@@ -298,14 +298,14 @@ namespace iPixelCommands {
         // Append "ffffff00000000" as bytes
         payload.push_back(0xFF); payload.push_back(0xFF); payload.push_back(0xFF);
         payload.push_back(0x00); payload.push_back(0x00); payload.push_back(0x00);
-        payload.push_back(0x00); payload.push_back(0x00);
+        payload.push_back(0x00);
 
         // Append encoded characters
         std::vector<uint8_t> chars_bytes = encodeText(text, matrix_height, r, g, b);
         payload.insert(payload.end(), chars_bytes.begin(), chars_bytes.end());
 
         // --- CRC ---
-        std::vector<uint8_t> crc_bytes = Helpers::calculateCRC32Bytes(payload);
+        std::vector<uint8_t> crc_bytes = Helpers::calculateCRC32Bytes(payload); //Byte 10-13
 
         // --- Assemble final message ---
         std::vector<uint8_t> result;
