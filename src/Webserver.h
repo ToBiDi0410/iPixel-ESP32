@@ -6,6 +6,7 @@
 #include <ESPAsyncWebServer.h>
 #include "iPixelDeviceRegistry.h"
 #include "Helpers.h"
+#include "gfx/GFX.h"
 
 AsyncWebServer server(80);
 
@@ -134,6 +135,50 @@ void init_webserver() {
                     }
                 }
                 dev->sendPNG(Helpers::encodeRGBAPixelsToPng(framebuffer, WIDTH, HEIGHT));
+            } else if(action == "gfxTest") {
+                GFXGroupElement elem(0,0,32,32,0);
+
+                GFXElement* redBox = new GFXElement(0,0,16,16,0);
+                redBox->modifiers.push_back(new GFXBackgroundColorModifier(Color(255, 0, 0, 255)));
+                elem.children.push_back(redBox);
+
+                GFXElement* greenBox = new GFXElement(16,0,16,16,0);
+                greenBox->modifiers.push_back(new GFXBackgroundColorModifier(Color(0, 255, 0, 255)));
+                elem.children.push_back(greenBox);
+
+                GFXElement* blueBox = new GFXElement(0,16,16,16,0);
+                blueBox->modifiers.push_back(new GFXBackgroundColorModifier(Color(0, 0, 255, 255)));
+                elem.children.push_back(blueBox);
+
+                GFXElement* whiteBox = new GFXElement(16,16,16,16,0);
+                whiteBox->modifiers.push_back(new GFXBackgroundColorModifier(Color(255, 255, 255, 255)));
+                elem.children.push_back(whiteBox);
+
+                //Render and send
+                elem._render(0);
+                dev->sendPNG(Helpers::encodeRGBAPixelsToPng(elem.framebuffer, elem.width, elem.height));
+            } else if(action == "gfxJSON") {
+                if (!request->hasParam("root")) {
+                    request->send(400, "text/plain", "Missing 'root' parameter");
+                    return;
+                }
+
+                JsonDocument doc;
+                DeserializationError error = deserializeJson(doc, getParamString("root", "{}"));
+                if (error) {
+                    request->send(400, "text/plain", "Invalid JSON");
+                    return;
+                }
+
+                JsonObject rootObj = doc.as<JsonObject>();
+                GFXElement* rootElement = parseElement(rootObj);
+
+                // Render element
+                rootElement->_render(0);
+                dev->sendPNG(Helpers::encodeRGBAPixelsToPng(rootElement->framebuffer, rootElement->width, rootElement->height));
+
+                // Cleanup
+                delete rootElement;
             } else {
                 request->send(400, "text/plain", "Invalid action");
                 return;

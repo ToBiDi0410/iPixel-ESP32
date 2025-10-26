@@ -39,13 +39,17 @@ You have to determine this BLE-address on your own (e.g. using Android Apps).
 | `/device/:mac/sendArbitrary`          | Send rainbow test framebuffer  |                                                                                                                                   |
 ---
 
+## 🖼️ GFX
+**ESP32-iPixel** features a very early stage GFX stack that allows rendering element-based views on the device by sending the structure via JSON.  
+Take a look at the example in [GFX.md](GFX.md)
+
+
 ## ⚙️ Installation
 1. Install **[PlatformIO](https://platformio.org/)**.
 2. Build and upload the firmware to the ESP32 using PlatformIO.
 3. Open a **Chromium-based browser** and visit [https://install.wled.me/](https://install.wled.me/).
 4. Click **Install** and select your device.
 5. Connect to WiFi:
-
    * Click **Connect to WiFi** and wait for the scan to finish.
    * Select your WiFi network and enter credentials.
    * Wait for the connection to establish.
