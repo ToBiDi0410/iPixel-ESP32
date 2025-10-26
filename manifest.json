@@ -1,0 +1,34 @@
+[
+{
+  "name": "firmware-esp32c3dev",
+  "chipFamily": "ESP32",
+  "parts": [
+    {
+      "path": "firmware-esp32c3dev/firmware.bin",
+      "offset": 0
+    }
+  ]
+}
+,
+{
+  "name": "firmware-esp32dev",
+  "chipFamily": "ESP32",
+  "parts": [
+    {
+      "path": "firmware-esp32dev/firmware.bin",
+      "offset": 0
+    }
+  ]
+}
+,
+{
+  "name": "firmware-esp32s3dev",
+  "chipFamily": "ESP32",
+  "parts": [
+    {
+      "path": "firmware-esp32s3dev/firmware.bin",
+      "offset": 0
+    }
+  ]
+}
+]
