@@ -317,4 +317,44 @@ namespace iPixelCommands {
         return result;
     }
 
+    std::vector<uint8_t> sendPNG(const std::vector<uint8_t> &pngData) {
+        std::vector<uint8_t> checksum = Helpers::calculateCRC32Bytes(pngData);
+        std::vector<uint8_t> pngSize = Helpers::getFrameSize(pngData, 4);
+
+        std::vector<uint8_t> result;
+        result.insert(result.end(), { 0xFF, 0xFF }); //Placeholder for Frame Size
+        result.insert(result.end(), { 0x02, 0x00, 0x00 }); //Prefix
+        result.insert(result.end(), pngSize.begin(), pngSize.end()); //PNG Size
+        result.insert(result.end(), checksum.begin(), checksum.end()); //Checksum
+        result.insert(result.end(), { 0x00, 0x65 }); //Mid
+        result.insert(result.end(), pngData.begin(), pngData.end()); //Data
+
+        //Replace Placeholder for Frame Size
+        std::vector<uint8_t> frameSize = Helpers::getFrameSize(result, 2);
+        result[0] = frameSize[0];
+        result[1] = frameSize[1];
+        
+        return result;
+    }
+
+    std::vector<uint8_t> sendGIF(const std::vector<uint8_t> &gifData) {
+        std::vector<uint8_t> checksum = Helpers::calculateCRC32Bytes(gifData);
+        std::vector<uint8_t> pngSize = Helpers::getFrameSize(gifData, 4);
+
+        std::vector<uint8_t> result;
+        result.insert(result.end(), { 0xFF, 0xFF }); //Placeholder for Frame Size
+        result.insert(result.end(), { 0x03, 0x00, 0x00 }); //Prefix
+        result.insert(result.end(), pngSize.begin(), pngSize.end()); //PNG Size
+        result.insert(result.end(), checksum.begin(), checksum.end()); //Checksum
+        result.insert(result.end(), { 0x02, 0x01 }); //Mid
+        result.insert(result.end(), gifData.begin(), gifData.end()); //Data
+
+        //Replace Placeholder for Frame Size
+        std::vector<uint8_t> frameSize = Helpers::getFrameSize(result, 2);
+        result[0] = frameSize[0];
+        result[1] = frameSize[1];
+        
+        return result;
+    }
+
 }

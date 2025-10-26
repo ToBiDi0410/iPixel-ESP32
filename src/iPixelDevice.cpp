@@ -77,9 +77,6 @@ void iPixelDevice::queueTick() {
     //Write bytes from command
     characteristic->writeValue(command.data(), chunkSize, false);
 
-    //Remove bytes from command
-    command.erase(command.begin(), command.begin() + chunkSize);
-
     //Debug
     printPrefix();
     Serial.print("Sent chunk of ");
@@ -98,6 +95,9 @@ void iPixelDevice::queueTick() {
         Serial.print(' ');
     }
     Serial.println();
+
+    //Remove bytes from command
+    command.erase(command.begin(), command.begin() + chunkSize);
 
     //Remove command if empty
     if (command.empty()) queue.erase(queue.begin());
@@ -284,3 +284,21 @@ void iPixelDevice::sendText(const String& text, int animation, int save_slot, in
     Serial.println(matrix_height);
     queuePush(command);
 };
+
+void iPixelDevice::sendPNG(const std::vector<uint8_t> &pngData) {
+    std::vector<uint8_t> command = iPixelCommands::sendPNG(pngData);
+    printPrefix();
+    Serial.print("PNG with ");
+    Serial.print(pngData.size());
+    Serial.println(" bytes");
+    queuePush(command);
+}
+
+void iPixelDevice::sendGIF(const std::vector<uint8_t> &gifData) {
+    std::vector<uint8_t> command = iPixelCommands::sendPNG(gifData);
+    printPrefix();
+    Serial.print("GIF with ");
+    Serial.print(gifData.size());
+    Serial.println(" bytes");
+    queuePush(command);
+}

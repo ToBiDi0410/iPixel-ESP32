@@ -59,4 +59,13 @@ namespace Helpers {
         return switchEndian(crc_bytes);
     }
 
+    
+    std::vector<uint8_t> getFrameSize(const std::vector<uint8_t>& data, size_t byteCount) {
+        uint64_t length = data.size();  
+        std::vector<uint8_t> result(byteCount, 0);
+        for (size_t i = 0; i < byteCount; ++i)
+            result[byteCount - 1 - i] = static_cast<uint8_t>((length >> (i * 8)) & 0xFF);
+        return switchEndian(result);
+    }
+
 }

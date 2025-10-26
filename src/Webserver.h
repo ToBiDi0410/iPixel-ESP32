@@ -5,6 +5,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include "iPixelDeviceRegistry.h"
+#include "Helpers.h"
 
 AsyncWebServer server(80);
 
@@ -107,7 +108,11 @@ void init_webserver() {
                     getParamInt("rainbow_mode"),
                     getParamInt("matrix_height")
                 );
-            }  else {
+            } else if(action == "sendPNG") {
+                request->send(501, "text/plain", "Implementation pending");
+            } else if(action == "sendHIF") {
+                request->send(501, "text/plain", "Implementation pending");
+            } else {
                 request->send(400, "text/plain", "Invalid action");
                 return;
             }

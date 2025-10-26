@@ -22,4 +22,7 @@ namespace Helpers {
     //Compute CRC32 as 4-byte vector, reversed
     std::vector<uint8_t> calculateCRC32Bytes(const std::vector<uint8_t>& data);
 
+    //Returns the frame size in a vector of size bytes
+    std::vector<uint8_t> getFrameSize(const std::vector<uint8_t>& data, size_t size);
+
 }

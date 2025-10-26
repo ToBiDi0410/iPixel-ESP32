@@ -54,9 +54,6 @@ You have to determine this BLE-address on your own (e.g. using Android Apps).
 * Device pairings (save devices instead of always using the mac)
 * Password or key-based protection
 * Connection improvements (faster connect? better disconnect handling?)
-* Commands:
-  * `sendPNG`
-  * `sendGIF`
 * Clock Mode via NTP (set Display as clock)
 * Web Flasher Support
 ---
