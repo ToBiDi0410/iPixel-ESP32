@@ -68,4 +68,34 @@ namespace Helpers {
         return switchEndian(result);
     }
 
+    std::vector<uint8_t> hexStringToVector(const String &hexString) {
+        std::vector<uint8_t> result;
+        int len = hexString.length();
+        for (int i = 0; i < len; ) {
+            // Skip any spaces
+            while (i < len && hexString[i] == ' ') i++;
+            if (i >= len) break;
+
+            // Parse two hex characters
+            char c1 = hexString[i++];
+            if (i >= len) break;
+            char c2 = hexString[i++];
+
+            uint8_t byte = 0;
+
+            // Convert first hex digit
+            if (c1 >= '0' && c1 <= '9') byte = (c1 - '0') << 4;
+            else if (c1 >= 'A' && c1 <= 'F') byte = (c1 - 'A' + 10) << 4;
+            else if (c1 >= 'a' && c1 <= 'f') byte = (c1 - 'a' + 10) << 4;
+
+            // Convert second hex digit
+            if (c2 >= '0' && c2 <= '9') byte |= (c2 - '0');
+            else if (c2 >= 'A' && c2 <= 'F') byte |= (c2 - 'A' + 10);
+            else if (c2 >= 'a' && c2 <= 'f') byte |= (c2 - 'a' + 10);
+
+            result.push_back(byte);
+        }
+        return result;
+    }
+
 }

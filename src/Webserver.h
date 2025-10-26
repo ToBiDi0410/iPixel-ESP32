@@ -109,9 +109,9 @@ void init_webserver() {
                     getParamInt("matrix_height")
                 );
             } else if(action == "sendPNG") {
-                request->send(501, "text/plain", "Implementation pending");
-            } else if(action == "sendHIF") {
-                request->send(501, "text/plain", "Implementation pending");
+                dev->sendPNG(Helpers::hexStringToVector(getParamString("hex")));
+            } else if(action == "sendGIF") {
+                dev->sendPNG(Helpers::hexStringToVector(getParamString("hex")));
             } else {
                 request->send(400, "text/plain", "Invalid action");
                 return;
