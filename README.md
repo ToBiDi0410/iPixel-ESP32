@@ -34,10 +34,9 @@ You have to determine this BLE-address on your own (e.g. using Android Apps).
 | `/device/:mac/setRhythmLevelMode`     | Set rhythm-level visualization | `style=0-4&l0=0-15&...&l14=0-15`                                                                                                  |
 | `/device/:mac/setRhythmAnimationMode` | Set rhythm animation           | `style=0-1&frame=0-7`                                                                                                             |
 | `/device/:mac/sendText`               | Send text                      | `text=Hello&animation=0-7&save_slot=1-10&speed=0-100&colorR=0-255&colorG=0-255&colorB=0-255&rainbow_mode=0-9&matrix_height=0-255` |
-| `/device/:mac/sendPNG `               | Send PNG                       | `hex=HEX-STRING` (checkout 'File to Hex' on Google to get the hex string)                                                        |
-| `/device/:mac/sendGIF `               | Send GIF                       | `hex=HEX-STRING` (checkout 'File to Hex' on Google to get the hex string)                                                        |
-
-
+| `/device/:mac/sendPNG `               | Send PNG                       | `hex=HEX-STRING` (checkout 'File to Hex' on Google to get the hex string)                                                         |
+| `/device/:mac/sendGIF `               | Send GIF                       | `hex=HEX-STRING` (checkout 'File to Hex' on Google to get the hex string)                                                         |
+| `/device/:mac/sendArbitrary `         | Send rainbow test framebuffer  |                                                                                                                                   |
 ---
 
 ## ⚙️ Installation
@@ -54,8 +53,7 @@ You have to determine this BLE-address on your own (e.g. using Android Apps).
 
 ---
 ## 📝 Todo
-* Arbitrary `setPixels` to draw a custom framebuffer
-* Support `sendText` for other matrices than 32x32
+* Support `sendText` for other matrices than 96x16
 * Device pairings (save devices instead of always using the mac)
 * Password or key-based protection
 * Connection improvements (faster connect? better disconnect handling?)

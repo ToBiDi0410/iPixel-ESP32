@@ -98,4 +98,23 @@ namespace Helpers {
         return result;
     }
 
+    std::vector<uint8_t> encodeRGBAPixelsToPng(std::vector<uint8_t> framebuffer, uint8_t width, uint8_t height) {
+        //Force lodepng to use 8-bit per channel RGBA (device does not support palleted colors!)
+        lodepng::State state;
+        state.info_raw.bitdepth = 8;
+        state.info_raw.colortype = LCT_RGBA;
+        state.info_png.color.bitdepth = 8;
+        state.info_png.color.colortype = LCT_RGBA;
+        state.encoder.auto_convert = 0;
+
+        std::vector<uint8_t> pngData;
+        unsigned error = lodepng::encode(pngData, framebuffer, width, height, state);
+        if(error) {
+            Serial.println("Failure encoding RGBA framebuffer to pixels!");
+            Serial.println(lodepng_error_text(error));
+            return {};
+        }
+        return pngData;
+    }
+
 }

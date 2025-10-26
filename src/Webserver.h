@@ -112,6 +112,28 @@ void init_webserver() {
                 dev->sendPNG(Helpers::hexStringToVector(getParamString("hex")));
             } else if(action == "sendGIF") {
                 dev->sendPNG(Helpers::hexStringToVector(getParamString("hex")));
+            } else if(action == "sendArbitrary") {
+                int WIDTH = 32;
+                int HEIGHT = 32;
+                std::vector<uint8_t> framebuffer(WIDTH * HEIGHT * 4); // 3 bytes per pixel (RGBA)
+                // Fill framebuffer with rainbow
+                for (int y = 0; y < HEIGHT; y++) {
+                    for (int x = 0; x < WIDTH; x++) {
+                        int i = (y * WIDTH + x) * 4; // 4 bytes per pixel
+
+                        // Hue-based rainbow
+                        float h = float(x) / WIDTH; 
+                        float r = fabs(sin(h * 3.14159f * 2.0f));
+                        float g = fabs(sin((h + 0.33f) * 3.14159f * 2.0f));
+                        float b = fabs(sin((h + 0.66f) * 3.14159f * 2.0f));
+
+                        framebuffer[i + 0] = (uint8_t)(r * 255); // Red
+                        framebuffer[i + 1] = (uint8_t)(g * 255); // Green
+                        framebuffer[i + 2] = (uint8_t)(b * 255); // Blue
+                        framebuffer[i + 3] = 255;                // Alpha = fully opaque
+                    }
+                }
+                dev->sendPNG(Helpers::encodeRGBAPixelsToPng(framebuffer, WIDTH, HEIGHT));
             } else {
                 request->send(400, "text/plain", "Invalid action");
                 return;
