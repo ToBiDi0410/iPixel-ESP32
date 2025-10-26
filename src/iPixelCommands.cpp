@@ -247,6 +247,16 @@ namespace iPixelCommands {
     }
 
     std::vector<uint8_t> sendText(const String& text, int animation, int save_slot, int speed, uint8_t r, uint8_t g, uint8_t b, int rainbow_mode, int matrix_height) {
+        checkRange("Text Length", text.length(), 1, 100);
+        checkRange("Animation", animation, 0, 7);
+        checkRange("Save Slot", save_slot, 1, 10);
+        checkRange("Speed", speed, 0, 100);
+        checkRange("colorR", r, 0, 255);
+        checkRange("colorG", g, 0, 255);
+        checkRange("colorB", b, 0, 255);
+        checkRange("rainbow_mode", rainbow_mode, 0, 9);
+        checkRange("matrix_height", matrix_height, 0, 255);
+
         // --- Validation ---
         if (text.length() == 0 || text.length() > 100) return {};
         if (animation == 3 || animation == 4) return {};
