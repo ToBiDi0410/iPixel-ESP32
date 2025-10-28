@@ -35,6 +35,16 @@ void init_webserver() {
 
         NimBLEAddress addr(macStr.c_str(), 0);
         iPixelDevice* dev = getOrCreateDevice(addr);
+       
+        if (!dev->connected) {
+            for (int n = 0; n < 50; n++) {
+                Serial.println("Waiting device connection...");
+                delay(100);
+                if (dev->connected) {
+                    break; // connected
+                }
+            }   
+        }
 
         if (!dev->connected) {
             request->send(408, "text/plain", "Device is connecting");
@@ -101,13 +111,13 @@ void init_webserver() {
                 dev->sendText(
                     getParamString("text"),
                     getParamInt("animation"),
-                    getParamInt("save_slot"),
-                    getParamInt("speed"),
-                    getParamInt("colorR"),
-                    getParamInt("colorG"),
-                    getParamInt("colorB"),
+                    getParamInt("save_slot", 1),
+                    getParamInt("speed", 80),
+                    getParamInt("colorR", 255),
+                    getParamInt("colorG", 255),
+                    getParamInt("colorB", 255),
                     getParamInt("rainbow_mode"),
-                    getParamInt("matrix_height")
+                    getParamInt("matrix_height", 16)
                 );
             } else if(action == "sendPNG") {
                 dev->sendPNG(Helpers::hexStringToVector(getParamString("hex")));
