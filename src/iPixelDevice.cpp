@@ -75,7 +75,20 @@ void iPixelDevice::queueTick() {
     size_t chunkSize = min(500, (int)command.size());
 
     //Write bytes from command
-    characteristic->writeValue(command.data(), chunkSize, false);
+    bool writeOk = false;
+    writeOk = characteristic->writeValue(command.data(), chunkSize, false);
+
+    //Check that device is still connected
+    if (!writeOk) {
+        printPrefix();
+        Serial.println("ERROR: write failed or no ACK received, disconnecting...");
+
+        connected = false;
+        client->disconnect();
+
+        delay(100);
+        return;
+    }
 
     //Remove bytes from command
     command.erase(command.begin(), command.begin() + chunkSize);
