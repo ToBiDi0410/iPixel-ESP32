@@ -1,3 +1,11 @@
+> [!NOTE]
+> **Development Paused**
+>
+> Development of this project is currently on hold. No regular updates, bug fixes, or new features are planned at this time.
+>
+> Development may resume in the future, but there is no timeline or guarantee.
+
+
 # ESP32-iPixel
 
 **ESP32-iPixel** is a project to control **iPixel color matrices** using an ESP32 microcontroller.  
